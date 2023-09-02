@@ -112,8 +112,9 @@ img {
 		</div>
 		<script>
 			function getParam(sname) {
-				var params = location.search.substr(location.search
-						.indexOf("?") + 1);
+				//파라미터 부분 자르기
+				var params = location.search.substr(location.search.indexOf("?") + 1);
+				//초기화
 				var sval = "";
 				params = params.split("&");
 				for (var i = 0; i < params.length; i++) {
@@ -125,95 +126,93 @@ img {
 				return sval;
 			}
 			// 파라미터 값 확인을 위한 실행
-			getParam();
+			getParam("contentId");
 
 			// contentId에 파라미터에서 던진 컨텐츠 아이디 저장, 예) 2828431
 			var contentId = temp[1];
 
 			// 테스트 파라미터 포함 값은 > test.html?contentId=2828431
 
-			$(document)
-					.ready(
-							function() {
-								$
-										.ajax({
-											/* URL에 API에서 가져온 주소값 입력 */
-											url : "https://apis.data.go.kr/B551011/KorService1/detailCommon1?MobileOS=ETC&MobileApp=GoSeoul&_type=json&contentId="
-													+ contentId
-													+ "&contentTypeId=15&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=20&pageNo=1&serviceKey=9u1LYAg7hOW1YTn138et7L7Q8Qcks2RZvreM6YC011a5iHJrju%2BbgL%2FSP8uU1FE0d3k0K3fqzUuvSEWUu8xndg%3D%3D",
-											method : 'GET',
-											async : false,
-											dataType : "json",
-											success : function(data) {
-												console.log(data);
-												console.log(contentId);
-												let detail = data.response.body.items.item;
-												var mapx = 0;
-												var mapy = 0;
-												for (let i = 0; i < detail.length; i++) {
-													let dt = detail[i];
-													$("#title").text(dt.title);
-													$("<img>").attr("src",
-															dt.firstimage)
-															.appendTo("#thumb");
-													$("#overview").html(
-															dt.overview);
-													//  받아온 dt.homepage값에서 순수 url만 추출하는 코드
-													const text = dt.homepage;
-													const urlPattern = /https?:\/\/[^\s"'<>]+/g;
-													const urls = text
-															.match(urlPattern)[0];
-													console.log(urls);
+			$(document).ready(function() {
+				$.ajax({
+					/* URL에 API에서 가져온 주소값 입력 */
+					url : "https://apis.data.go.kr/B551011/KorService1/detailCommon1?MobileOS=ETC&MobileApp=GoSeoul&_type=json&contentId="
+						+ contentId
+						+ "&contentTypeId=15&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y
+						&numOfRows=20&pageNo=1&serviceKey=9u1LYAg7hOW1YTn138et7L7Q8Qcks2RZvreM6YC011a5iHJrju%2BbgL%2FSP8uU1FE0d3k0K3fqzUuvSEWUu8xndg%3D%3D",
+					method : 'GET',
+					async : false,
+					dataType : "json",
+					success : function(data) {
+						console.log(data);
+						console.log(contentId);
+						let detail = data.response.body.items.item;
+						var mapx = 0;
+						var mapy = 0;
+						for (let i = 0; i < detail.length; i++) {
+							let dt = detail[i];
+							$("#title").text(dt.title);
+							$("<img>").attr("src",
+									dt.firstimage)
+									.appendTo("#thumb");
+							$("#overview").html(
+									dt.overview);
+							//  받아온 dt.homepage값에서 순수 url만 추출하는 코드
+							const text = dt.homepage;
+							const urlPattern = /https?:\/\/[^\s"'<>]+/g;
+							const urls = text
+									.match(urlPattern)[0];
+							console.log(urls);
 
-													$("#website")
-															.html(
-																	"<b>웹사이트:  </b><br><a href='" + urls + "'>바로가기</a>");
-													$("#contact")
-															.html(
-																	"<b>문의처:  </b><br>"
-																			+ dt.telname
-																			+ " "
-																			+ dt.tel);
-													$("#address")
-															.html(
-																	"<b>주소:  </b>"
-																			+ $(
-																					"<span>")
-																					.text(
-																							dt.addr1)
-																					.html());
-													mapx = dt.mapx;
-													mapy = dt.mapy;
+							$("#website")
+									.html(
+											"<b>웹사이트:  </b><br><a href='" + urls + "'>바로가기</a>");
+							$("#contact")
+									.html(
+											"<b>문의처:  </b><br>"
+													+ dt.telname
+													+ " "
+													+ dt.tel);
+							$("#address")
+									.html(
+											"<b>주소:  </b>"
+													+ $(
+															"<span>")
+															.text(
+																	dt.addr1)
+															.html());
+							mapx = dt.mapx;
+							mapy = dt.mapy;
 
-												}
-												console.log(mapx);
-												console.log(mapy);
-												var container = document
-														.getElementById('map');
-												var options = {
-													center : new kakao.maps.LatLng(
-															mapy, mapx),
-													level : 3
-												};
+						}
+						console.log(mapx);
+						console.log(mapy);
+						var container = document
+								.getElementById('map');
+						var options = {
+							center : new kakao.maps.LatLng(
+									mapy, mapx),
+							level : 3
+						};
 
-												var map = new kakao.maps.Map(
-														container, options);
-												map
-														.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
-												var markerPosition = new kakao.maps.LatLng(
-														mapy, mapx);
+						var map = new kakao.maps.Map(
+								container, options);
+						map
+								.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+						var markerPosition = new kakao.maps.LatLng(
+								mapy, mapx);
 
-												var marker = new kakao.maps.Marker(
-														{
-															position : markerPosition
-														});
+						var marker = new kakao.maps.Marker(
+								{
+									position : markerPosition
+								});
 
-												// 마커가 지도 위에 표시되도록 설정합니다
-												marker.setMap(map);
-											}
-										});
+						// 마커가 지도 위에 표시되도록 설정합니다
+						marker.setMap(map);
+					}
+				});
 
-								$
+				$
 										.ajax({
 											/* URL에 API에서 가져온 주소값 입력 */
 											url : "https://apis.data.go.kr/B551011/KorService1/detailIntro1?MobileOS=etc&MobileApp=goSeoul&_type=json&contentId="
