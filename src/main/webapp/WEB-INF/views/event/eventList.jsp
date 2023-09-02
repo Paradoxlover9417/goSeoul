@@ -133,8 +133,7 @@ button {
 					success : function(result) {
 						let events = result.response.body.items.item;
 						events.sort(function(a, b) {
-							return b.eventstartdate
-									.localeCompare(a.eventstartdate);
+							return b.eventstartdate.localeCompare(a.eventstartdate);
 						});
 						let cardContainer = $(".card-container");
 						let today = new Date();
@@ -148,19 +147,9 @@ button {
 							let card = $("<div>").addClass("card");
 							let title = $("<h2>").text(event.title);
 							let place = $("<p>").text(event.addr1);
-							let startDate = new Date(event.eventstartdate
-									.slice(0, 4), event.eventstartdate.slice(4,
-									6) - 1, event.eventstartdate.slice(6, 8));
-							let endDate = new Date(event.eventenddate.slice(0,
-									4), event.eventenddate.slice(4, 6) - 1,
-									event.eventenddate.slice(6, 8));
-							let date = $("<p>")
-									.text(
-											startDate
-													.toLocaleDateString("ko-KR")
-													+ " ~ "
-													+ endDate
-															.toLocaleDateString("ko-KR"));
+							let startDate = new Date(event.eventstartdate.slice(0, 4), event.eventstartdate.slice(4, 6) - 1, event.eventstartdate.slice(6, 8));
+							let endDate = new Date(event.eventenddate.slice(0, 4), event.eventenddate.slice(4, 6) - 1, event.eventenddate.slice(6, 8));
+							let date = $("<p>").text(startDate.toLocaleDateString("ko-KR") + " ~ " + endDate.toLocaleDateString("ko-KR"));
 
 							// 필터링 조건 설정
 							if (endDate < today) {
@@ -176,22 +165,18 @@ button {
 							// 이미지가 없을 경우 기본로고 표시
 							card.append(title).append(place).append(date);
 							if (event.firstimage !== "") {
-								card.css("background-image", "url("
-										+ event.firstimage + ")");
+								card.css("background-image", "url("+ event.firstimage + ")");
 							} else {
-								card.css("background-image",
-										"url(./images/GoSeoul_Logo.jpg)");
+								card.css("background-image", "url(./images/GoSeoul_Logo.jpg)");
 							}
 							//          cardRow = $("<div>").addClass("card-row");
 							//          cardContainer.append(cardRow);
 							//          cardRow.append(card);
 							cardContainer.append(card);
 
-							card
-									.click(function() {
-										window.location.href = "eventDetail.do?contentId="
-												+ event.contentid;
-									});
+							card.click(function() {
+								window.location.href = "eventDetail.do?contentId=" + event.contentid;
+							});
 						}
 						let totalCards = events.length;
 						let totalPage = Math.ceil(totalCards / 12);
